@@ -1,29 +1,34 @@
-//tell jenkins this is a pipeline
 pipeline {
- 
-    //Determine in which node will the pipeline be executed
+    //execute in specific docker container
+    //agent { docker { image 'python:3.7.2' } }
+    //execute in any available agent
     agent any
+    //Determine in which node will the pipeline be executed
 
-    stages{
-    	stage('before'){
-    		steps{
-    			sh 'python3 --version'
-    			sh 'pip3 install -r requirements.txt'
-    		}
-    	}
-    	stage('build'){
-    		sh 'python3 -m tox -e build'
-    	}
-
-    	stage('test'){
-    		when{ //algo ahi
-    			expression {params.test == true}
-    		}steps{
-    			sh 'python3 -m tox -e test'		
-    		}
-    	}
-
-    	stage('SonarQube analysis') {
+    stages {
+            stage('before') {
+                steps {
+                    sh 'python3 --version'
+                    sh 'pip3 install -r requirements.txt'
+                }
+            }
+            //add build step on tox
+            stage('build') {
+                steps {
+                    sh 'python3 -m tox -e build'
+                }
+            }
+            stage('test') {
+                when{
+                    //only execute tests is test parameter is true
+                    expression { params.test == true }
+                }
+                steps {
+                    sh 'python3 -m tox -e test'
+                }
+            }
+            
+            stage('SonarQube analysis') {
                 steps {
                     script{
                         def scannerHome = tool 'SonarScanner';
@@ -32,7 +37,8 @@ pipeline {
                         }
                     }
                 }
-        }
+            }
+        
     }
-     
+    
 }
