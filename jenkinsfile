@@ -18,8 +18,7 @@ pipeline {
     	stage('test'){
     		when{ //algo ahi
     			expression {params.test == true}
-    		}
-    		steps{
+    		}steps{
     			sh 'python3 -m tox -e test'		
     		}
     	}
