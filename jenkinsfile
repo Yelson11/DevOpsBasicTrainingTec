@@ -16,7 +16,7 @@ pipeline {
     	}
 
     	stage('test'){
-    		when //algo ahi
+    		when{ //algo ahi
     			expression {params.test == true}
     		}
     		steps{
